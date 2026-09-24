@@ -1,0 +1,48 @@
+
+/* ==============================================================
+   REGOLE GENERALI
+   ============================================================== */
+
+
+/*
+|--------------------------------------------------------------------------
+| Form controls
+|--------------------------------------------------------------------------
+|
+| Manteniamo lo stesso font utilizzato dall'applicazione anche
+| all'interno di pulsanti, campi, select e textarea.
+|
+*/
+
+button,
+input,
+select,
+textarea {
+
+    font-family:
+        var(--font-family);
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Focus
+|--------------------------------------------------------------------------
+|
+| Evidenziazione accessibile quando l'utente naviga con tastiera.
+|
+*/
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+
+    outline:
+        2px solid var(--color-primary);
+
+    outline-offset:
+        2px;
+
+}

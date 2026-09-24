@@ -1,0 +1,68 @@
+
+:root {
+
+    /* ==========================================================
+       COLORI PRINCIPALI
+       ========================================================== */
+
+    --color-primary: #00645a;
+    --color-primary-dark: #004d45;
+    --color-primary-light: #e9f3f1;
+
+    --color-background: #f3f5f4;
+    --color-surface: #ffffff;
+
+    --color-border: #e1e6e3;
+
+    --color-text: #25302d;
+    --color-text-secondary: #68736f;
+    --color-text-light: #9aa39f;
+
+    --color-success: #348264;
+    --color-warning: #c18a32;
+    --color-danger: #bd5555;
+
+
+    /* ==========================================================
+       SIDEBAR
+       ========================================================== */
+
+    --sidebar-width: 248px;
+
+    --sidebar-background: #ffffff;
+    --sidebar-border: #e1e6e3;
+
+
+    /* ==========================================================
+       DIMENSIONI
+       ========================================================== */
+
+    --header-height: 82px;
+
+    --border-radius-small: 7px;
+    --border-radius-medium: 10px;
+    --border-radius-large: 14px;
+
+
+    /* ==========================================================
+       OMBRE
+       ========================================================== */
+
+    --shadow-small:
+        0 1px 3px rgba(20, 35, 30, 0.04);
+
+    --shadow-medium:
+        0 6px 20px rgba(20, 35, 30, 0.07);
+
+
+    /* ==========================================================
+       FONT
+       ========================================================== */
+
+    --font-family:
+        Ebrima,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+}

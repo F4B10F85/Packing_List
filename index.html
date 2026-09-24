@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Packing List</title>
+
+    <!--
+        CSS principale dell'applicazione.
+    -->
+    <link
+        rel="stylesheet"
+        href="assets/css/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/layout.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/components.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/main.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="app">
+
+        <!-- ======================================================
+             SIDEBAR
+             ====================================================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+
+                <div class="sidebar-logo">
+                    PL
+                </div>
+
+                <div class="sidebar-title">
+                    Packing List
+                </div>
+
+            </div>
+
+
+            <nav class="sidebar-navigation">
+
+                <button
+                    class="navigation-item active"
+                    data-workspace="dashboard"
+                >
+                    <span class="navigation-icon">01</span>
+                    <span class="navigation-label">Dashboard</span>
+                </button>
+
+
+                <button
+                    class="navigation-item"
+                    data-workspace="import"
+                >
+                    <span class="navigation-icon">02</span>
+                    <span class="navigation-label">Importazione</span>
+                </button>
+
+
+                <button
+                    class="navigation-item"
+                    data-workspace="rules"
+                >
+                    <span class="navigation-icon">03</span>
+                    <span class="navigation-label">Regole</span>
+                </button>
+
+
+                <button
+                    class="navigation-item"
+                    data-workspace="boxes"
+                >
+                    <span class="navigation-icon">04</span>
+                    <span class="navigation-label">BOX</span>
+                </button>
+
+
+                <button
+                    class="navigation-item"
+                    data-workspace="control"
+                >
+                    <span class="navigation-icon">05</span>
+                    <span class="navigation-label">Controllo</span>
+                </button>
+
+
+                <button
+                    class="navigation-item"
+                    data-workspace="result"
+                >
+                    <span class="navigation-icon">06</span>
+                    <span class="navigation-label">Packing List</span>
+                </button>
+
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <span>KEP</span>
+                <span>Packing List</span>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ======================================================
+             AREA PRINCIPALE
+             ====================================================== -->
+
+        <main class="main-content">
+
+            <!-- HEADER -->
+
+            <header class="main-header">
+
+                <div>
+
+                    <div class="page-breadcrumb">
+                        Packing List
+                    </div>
+
+                    <h1 id="page-title">
+                        Dashboard
+                    </h1>
+
+                </div>
+
+
+                <div class="header-status">
+
+                    <span
+                        class="status-indicator"
+                        id="application-status-indicator"
+                    ></span>
+
+                    <span id="application-status">
+                        Pronto
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <!-- WORKSPACE -->
+
+            <section
+                id="workspace"
+                class="workspace"
+            >
+
+                <!--
+                    Il contenuto dello spazio di lavoro
+                    viene caricato tramite JavaScript.
+                -->
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ==========================================================
+         JAVASCRIPT
+         ========================================================== -->
+
+    <script
+        src="assets/js/app.js"
+    ></script>
+
+</body>
+
+</html>
