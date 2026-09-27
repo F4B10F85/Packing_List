@@ -1,6 +1,6 @@
 {
   "name": "packing_list",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Packing List",
   "main": "main.js",
   "scripts": {
@@ -26,7 +26,7 @@
   "build": {
     "appId": "com.kep.packinglist",
     "productName": "Packing List",
-    "artifactName": "${productName} Setup ${version}.${ext}",
+    "artifactName": "Packing-List-Setup-${version}.${ext}",
     "directories": {
       "output": "dist"
     },
