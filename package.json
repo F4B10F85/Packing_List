@@ -1,13 +1,12 @@
 {
   "name": "packing_list",
   "version": "1.0.0",
-  "description": "",
+  "description": "Packing List",
   "main": "main.js",
-  "directories": {
-    "doc": "docs"
-  },
+  
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -22,6 +21,28 @@
   },
   "homepage": "https://github.com/F4B10F85/Packing_List#readme",
   "devDependencies": {
-    "electron": "^44.4.5"
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.kep.packinglist",
+    "productName": "Packing List",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/.cache/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/image/KAPL.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }
