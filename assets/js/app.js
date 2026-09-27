@@ -2882,8 +2882,1533 @@ async function handleFileDrop(
 
 }
 
+/* 
+|--------------------------------------------------------------------------
+| Animazione importazione Packing List
+|--------------------------------------------------------------------------
+*/
+
+let packingListImportAnimationTimer = null;
+
 
 /*
+|--------------------------------------------------------------------------
+| Avvio animazione
+|--------------------------------------------------------------------------
+*/
+
+function startPackingListImportAnimation(
+    file
+) {
+
+    removePackingListImportAnimation();
+
+
+    injectPackingListImportStyles();
+
+
+    const overlay =
+        document.createElement(
+            "div"
+        );
+
+
+    overlay.id =
+        "packing-list-import-overlay";
+
+
+    overlay.innerHTML = `
+
+        <div class="packing-import-scene">
+
+            <div class="packing-import-header">
+
+                <div class="packing-import-eyebrow">
+                    KEP
+                </div>
+
+                <div class="packing-import-title">
+                    Importazione Packing List
+                </div>
+
+                <div
+                    class="packing-import-file-name"
+                    id="packing-import-file-name"
+                >
+                    ${escapePackingListImportHtml(file.name)}
+                </div>
+
+            </div>
+
+
+            <div class="packing-import-stage">
+
+
+                <div
+                    class="packing-import-document"
+                    id="packing-import-document"
+                >
+
+                    <div class="packing-import-document-top">
+
+                        <div class="packing-import-document-icon">
+                            XLS
+                        </div>
+
+                        <div>
+
+                            <div class="packing-import-document-name">
+                                ${escapePackingListImportHtml(file.name)}
+                            </div>
+
+                            <div class="packing-import-document-type">
+                                Documento Excel
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="packing-import-document-lines">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="packing-import-processing"
+                    id="packing-import-processing"
+                >
+
+                    <div class="packing-import-ring">
+
+                        <div class="packing-import-ring-inner">
+                            XLS
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="packing-import-result"
+                    id="packing-import-result"
+                >
+
+                    <div class="packing-import-result-header">
+                        PACKING LIST
+                    </div>
+
+                    <div class="packing-import-result-lines">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                    <div
+                        class="packing-import-result-stats"
+                        id="packing-import-result-stats"
+                    >
+                        ELABORAZIONE
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="packing-import-status">
+
+                <div
+                    class="packing-import-status-label"
+                    id="packing-import-status-label"
+                >
+                    LETTURA FILE
+                </div>
+
+
+                <div
+                    class="packing-import-status-text"
+                    id="packing-import-status-text"
+                >
+                    Apertura del documento Excel...
+                </div>
+
+
+                <div class="packing-import-progress">
+
+                    <div
+                        class="packing-import-progress-bar"
+                        id="packing-import-progress-bar"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="packing-import-complete"
+                id="packing-import-complete"
+            >
+
+                <div class="packing-import-check">
+                    ✓
+                </div>
+
+                <div class="packing-import-complete-text">
+                    ELABORAZIONE COMPLETATA
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        overlay
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Animazione iniziale
+    |--------------------------------------------------------------------------
+    */
+
+    requestAnimationFrame(
+        () => {
+
+            overlay.classList.add(
+                "is-visible"
+            );
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Animazione documento
+    |--------------------------------------------------------------------------
+    */
+
+    setTimeout(
+        () => {
+
+            const documentElement =
+                document.getElementById(
+                    "packing-import-document"
+                );
+
+            if (documentElement) {
+
+                documentElement.classList.add(
+                    "is-processing"
+                );
+
+            }
+
+        },
+        700
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Progressione visiva
+    |--------------------------------------------------------------------------
+    */
+
+    const progressBar =
+        document.getElementById(
+            "packing-import-progress-bar"
+        );
+
+
+    if (progressBar) {
+
+        setTimeout(
+            () => {
+
+                progressBar.style.width =
+                    "12%";
+
+            },
+            500
+        );
+
+        setTimeout(
+            () => {
+
+                progressBar.style.width =
+                    "28%";
+
+            },
+            1800
+        );
+
+        setTimeout(
+            () => {
+
+                progressBar.style.width =
+                    "55%";
+
+            },
+            1500
+        );
+
+        setTimeout(
+            () => {
+
+                progressBar.style.width =
+                    "45%";
+
+            },
+            3000
+        );
+
+        setTimeout(
+            () => {
+
+                progressBar.style.width =
+                    "63%";
+
+            },
+            4400
+        );
+
+        setTimeout(
+            () => {
+
+                progressBar.style.width =
+                    "82%";
+
+            },
+            6000
+        );
+
+        setTimeout(
+            () => {
+
+                progressBar.style.width =
+                    "94%";
+
+            },
+            7400
+        );
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Aggiornamento stato animazione
+|--------------------------------------------------------------------------
+*/
+
+function updatePackingListImportAnimation(
+    label,
+    text,
+    statistics = null
+) {
+
+    const labelElement =
+        document.getElementById(
+            "packing-import-status-label"
+        );
+
+
+    const textElement =
+        document.getElementById(
+            "packing-import-status-text"
+        );
+
+
+    if (labelElement) {
+
+        labelElement.textContent =
+            label;
+
+    }
+
+
+    if (textElement) {
+
+        textElement.textContent =
+            text;
+
+    }
+
+
+    const progressBar =
+        document.getElementById(
+            "packing-import-progress-bar"
+        );
+
+
+    if (progressBar) {
+
+        const progressSteps = {
+
+            "LETTURA FILE":
+                "22%",
+
+            "ANALISI ARTICOLI":
+                "42%",
+
+            "CLASSIFICAZIONE":
+                "56%",
+
+            "APPLICAZIONE REGOLE":
+                "70%",
+
+            "GENERAZIONE BOX":
+                "84%",
+
+            "PACKING LIST PRONTA":
+                "96%"
+
+        };
+
+
+        progressBar.style.width =
+            progressSteps[label]
+            || "50%";
+
+    }
+
+
+    if (
+        statistics &&
+        statistics.boxCount !== undefined
+    ) {
+
+        const statsElement =
+            document.getElementById(
+                "packing-import-result-stats"
+            );
+
+
+        if (statsElement) {
+
+            statsElement.innerHTML = `
+
+                <strong>
+                    ${statistics.boxCount}
+                </strong>
+                BOX
+
+                <span>•</span>
+
+                <strong>
+                    ${statistics.helmetCount}
+                </strong>
+                CASCHI
+
+            `;
+
+        }
+
+
+        const resultDocument =
+            document.getElementById(
+                "packing-import-result"
+            );
+
+
+        if (resultDocument) {
+
+            resultDocument.classList.add(
+                "is-ready"
+            );
+
+        }
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Completamento
+|--------------------------------------------------------------------------
+*/
+
+function completePackingListImportAnimation() {
+
+    const progressBar =
+        document.getElementById(
+            "packing-import-progress-bar"
+        );
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            "100%";
+
+    }
+
+
+    const complete =
+        document.getElementById(
+            "packing-import-complete"
+        );
+
+
+    if (complete) {
+
+        complete.classList.add(
+            "is-visible"
+        );
+
+    }
+
+
+    const processing =
+        document.getElementById(
+            "packing-import-processing"
+        );
+
+
+    if (processing) {
+
+        processing.classList.add(
+            "is-complete"
+        );
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Errore
+|--------------------------------------------------------------------------
+*/
+
+function showPackingListImportAnimationError(
+    error
+) {
+
+    const labelElement =
+        document.getElementById(
+            "packing-import-status-label"
+        );
+
+
+    const textElement =
+        document.getElementById(
+            "packing-import-status-text"
+        );
+
+
+    if (labelElement) {
+
+        labelElement.textContent =
+            "IMPORTAZIONE INTERROTTA";
+
+    }
+
+
+    if (textElement) {
+
+        textElement.textContent =
+            error.message
+            || "Si è verificato un errore.";
+
+    }
+
+
+    const progressBar =
+        document.getElementById(
+            "packing-import-progress-bar"
+        );
+
+
+    if (progressBar) {
+
+        progressBar.style.width =
+            "100%";
+
+        progressBar.classList.add(
+            "has-error"
+        );
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Rimozione overlay
+|--------------------------------------------------------------------------
+*/
+
+function removePackingListImportAnimation() {
+
+    if (
+        packingListImportAnimationTimer
+    ) {
+
+        clearTimeout(
+            packingListImportAnimationTimer
+        );
+
+        packingListImportAnimationTimer =
+            null;
+
+    }
+
+
+    const overlay =
+        document.getElementById(
+            "packing-list-import-overlay"
+        );
+
+
+    if (!overlay) {
+
+        return;
+
+    }
+
+
+    overlay.classList.remove(
+        "is-visible"
+    );
+
+
+    setTimeout(
+        () => {
+
+            if (overlay.parentNode) {
+
+                overlay.parentNode.removeChild(
+                    overlay
+                );
+
+            }
+
+        },
+        350
+    );
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Attesa
+|--------------------------------------------------------------------------
+*/
+
+function waitForImportAnimation(
+    milliseconds
+) {
+
+    return new Promise(
+        resolve => {
+
+            setTimeout(
+                resolve,
+                milliseconds
+            );
+
+        }
+    );
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Escape HTML
+|--------------------------------------------------------------------------
+*/
+
+function escapePackingListImportHtml(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| CSS animazione
+|--------------------------------------------------------------------------
+*/
+
+function injectPackingListImportStyles() {
+
+    if (
+        document.getElementById(
+            "packing-list-import-styles"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+
+    style.id =
+        "packing-list-import-styles";
+
+
+    style.textContent = `
+
+        #packing-list-import-overlay {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 99999;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                rgba(7, 24, 22, 0.96);
+
+            opacity: 0;
+
+            pointer-events: all;
+
+            transition:
+                opacity 0.35s ease;
+
+            font-family:
+                Ebrima,
+                "Segoe UI",
+                sans-serif;
+
+        }
+
+
+        #packing-list-import-overlay.is-visible {
+
+            opacity: 1;
+
+        }
+
+
+        .packing-import-scene {
+
+            width: min(
+                920px,
+                calc(100vw - 60px)
+            );
+
+            text-align: center;
+
+            color: #ffffff;
+
+        }
+
+
+        .packing-import-header {
+
+            margin-bottom: 38px;
+
+        }
+
+
+        .packing-import-eyebrow {
+
+            margin-bottom: 8px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.28em;
+
+            opacity: 0.58;
+
+        }
+
+
+        .packing-import-title {
+
+            font-size: 30px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.04em;
+
+        }
+
+
+        .packing-import-file-name {
+
+            margin-top: 8px;
+
+            font-size: 14px;
+
+            opacity: 0.58;
+
+        }
+
+
+        .packing-import-stage {
+
+            position: relative;
+
+            height: 270px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 70px;
+
+        }
+
+
+        .packing-import-document {
+
+            width: 250px;
+
+            min-height: 170px;
+
+            padding: 24px;
+
+            box-sizing: border-box;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ffffff,
+                    #eef4f3
+                );
+
+            color: #123d39;
+
+            box-shadow:
+                0 25px 70px
+                rgba(0,0,0,0.35);
+
+            transform:
+                translateX(-55px)
+                rotate(-3deg)
+                scale(0.92);
+
+            opacity: 0.65;
+
+            transition:
+                transform 1s cubic-bezier(
+                    0.22,
+                    1,
+                    0.36,
+                    1
+                ),
+                opacity 0.8s ease;
+
+        }
+
+
+        .packing-import-document.is-processing {
+
+            transform:
+                translateX(0)
+                rotate(0)
+                scale(1);
+
+            opacity: 1;
+
+        }
+
+
+        .packing-import-document-top {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            text-align: left;
+
+        }
+
+
+        .packing-import-document-icon {
+
+            width: 46px;
+
+            height: 46px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 8px;
+
+            background:
+                #00645a;
+
+            color: #ffffff;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+
+        }
+
+
+        .packing-import-document-name {
+
+            max-width: 155px;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+        }
+
+
+        .packing-import-document-type {
+
+            margin-top: 4px;
+
+            font-size: 11px;
+
+            opacity: 0.55;
+
+        }
+
+
+        .packing-import-document-lines {
+
+            margin-top: 22px;
+
+        }
+
+
+        .packing-import-document-lines span {
+
+            display: block;
+
+            height: 5px;
+
+            margin-bottom: 9px;
+
+            border-radius: 10px;
+
+            background:
+                #d5e3e1;
+
+            animation:
+                packingImportLinePulse
+                1.4s infinite ease-in-out;
+
+        }
+
+
+        .packing-import-document-lines span:nth-child(2) {
+
+            width: 82%;
+
+            animation-delay: 0.15s;
+
+        }
+
+
+        .packing-import-document-lines span:nth-child(3) {
+
+            width: 66%;
+
+            animation-delay: 0.3s;
+
+        }
+
+
+        .packing-import-document-lines span:nth-child(4) {
+
+            width: 91%;
+
+            animation-delay: 0.45s;
+
+        }
+
+
+        .packing-import-document-lines span:nth-child(5) {
+
+            width: 72%;
+
+            animation-delay: 0.6s;
+
+        }
+
+
+        .packing-import-document-lines span:nth-child(6) {
+
+            width: 55%;
+
+            animation-delay: 0.75s;
+
+        }
+
+
+        .packing-import-processing {
+
+            position: relative;
+
+            width: 100px;
+
+            height: 100px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+
+        .packing-import-ring {
+
+            position: absolute;
+
+            inset: 0;
+
+            border: 2px solid
+                rgba(255,255,255,0.15);
+
+            border-top-color:
+                #53c5b8;
+
+            border-radius: 50%;
+
+            animation:
+                packingImportSpin
+                1.15s linear infinite;
+
+        }
+
+
+        .packing-import-ring-inner {
+
+            position: absolute;
+
+            inset: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                #00645a;
+
+            color: #ffffff;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+
+            box-shadow:
+                0 10px 35px
+                rgba(0,100,90,0.35);
+
+        }
+
+
+        .packing-import-processing.is-complete
+        .packing-import-ring {
+
+            animation:
+                none;
+
+            border-color:
+                rgba(255,255,255,0.18);
+
+        }
+
+
+        .packing-import-result {
+
+            width: 250px;
+
+            min-height: 170px;
+
+            padding: 24px;
+
+            box-sizing: border-box;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #00645a,
+                    #004d45
+                );
+
+            box-shadow:
+                0 25px 70px
+                rgba(0,0,0,0.38);
+
+            transform:
+                translateX(55px)
+                translateY(15px)
+                rotate(3deg)
+                scale(0.88);
+
+            opacity: 0.15;
+
+            transition:
+                transform 1s cubic-bezier(
+                    0.22,
+                    1,
+                    0.36,
+                    1
+                ),
+                opacity 0.8s ease;
+
+        }
+
+
+        .packing-import-result.is-ready {
+
+            transform:
+                translateX(0)
+                translateY(0)
+                rotate(0)
+                scale(1);
+
+            opacity: 1;
+
+        }
+
+
+        .packing-import-result-header {
+
+            text-align: left;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.18em;
+
+        }
+
+
+        .packing-import-result-lines {
+
+            margin-top: 24px;
+
+        }
+
+
+        .packing-import-result-lines span {
+
+            display: block;
+
+            height: 5px;
+
+            margin-bottom: 10px;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,0.28);
+
+        }
+
+
+        .packing-import-result-lines span:nth-child(2) {
+
+            width: 80%;
+
+        }
+
+
+        .packing-import-result-lines span:nth-child(3) {
+
+            width: 62%;
+
+        }
+
+
+        .packing-import-result-lines span:nth-child(4) {
+
+            width: 90%;
+
+        }
+
+
+        .packing-import-result-stats {
+
+            margin-top: 22px;
+
+            font-size: 11px;
+
+            letter-spacing: 0.12em;
+
+            opacity: 0.72;
+
+        }
+
+
+        .packing-import-result-stats strong {
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            opacity: 1;
+
+        }
+
+
+        .packing-import-result-stats span {
+
+            margin: 0 8px;
+
+            opacity: 0.5;
+
+        }
+
+
+        .packing-import-status {
+
+            margin-top: 26px;
+
+        }
+
+
+        .packing-import-status-label {
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.22em;
+
+            color: #73d3c8;
+
+        }
+
+
+        .packing-import-status-text {
+
+            min-height: 22px;
+
+            margin-top: 8px;
+
+            font-size: 14px;
+
+            opacity: 0.72;
+
+        }
+
+
+        .packing-import-progress {
+
+            width: min(
+                520px,
+                80vw
+            );
+
+            height: 3px;
+
+            margin: 18px auto 0;
+
+            overflow: hidden;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,0.10);
+
+        }
+
+
+        .packing-import-progress-bar {
+
+            width: 0;
+
+            height: 100%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #00645a,
+                    #73d3c8
+                );
+
+            box-shadow:
+                0 0 14px
+                rgba(115,211,200,0.35);
+
+            transition:
+                width 0.65s
+                cubic-bezier(
+                    0.22,
+                    1,
+                    0.36,
+                    1
+                );
+
+        }
+
+
+        .packing-import-progress-bar.has-error {
+
+            background:
+                #d86b6b;
+
+        }
+
+
+        .packing-import-complete {
+
+            position: absolute;
+
+            left: 50%;
+
+            bottom: 42px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            transform:
+                translate(-50%, 20px);
+
+            opacity: 0;
+
+            transition:
+                opacity 0.45s ease,
+                transform 0.45s ease;
+
+        }
+
+
+        .packing-import-complete.is-visible {
+
+            transform:
+                translate(-50%, 0);
+
+            opacity: 1;
+
+        }
+
+
+        .packing-import-check {
+
+            width: 26px;
+
+            height: 26px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                #73d3c8;
+
+            color:
+                #003b35;
+
+            font-size: 16px;
+
+            font-weight: 900;
+
+        }
+
+
+        .packing-import-complete-text {
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.18em;
+
+            color: #73d3c8;
+
+        }
+
+
+        @keyframes packingImportSpin {
+
+            to {
+
+                transform:
+                    rotate(360deg);
+
+            }
+
+        }
+
+
+        @keyframes packingImportLinePulse {
+
+            0%,
+            100% {
+
+                opacity: 0.35;
+
+            }
+
+            50% {
+
+                opacity: 1;
+
+            }
+
+        }
+
+
+        @media (
+            max-width: 760px
+        ) {
+
+            .packing-import-stage {
+
+                height: 230px;
+
+                gap: 20px;
+
+            }
+
+
+            .packing-import-document,
+            .packing-import-result {
+
+                width: 190px;
+
+                min-height: 145px;
+
+                padding: 18px;
+
+            }
+
+
+            .packing-import-processing {
+
+                width: 70px;
+
+                height: 70px;
+
+            }
+
+
+            .packing-import-ring-inner {
+
+                inset: 13px;
+
+            }
+
+
+            .packing-import-title {
+
+                font-size: 23px;
+
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(
+        style
+    );
+
+}
+
+
+/* 
 |--------------------------------------------------------------------------
 | Elaborazione file importato
 |--------------------------------------------------------------------------
@@ -2893,13 +4418,58 @@ async function processImportedFile(
     file
 ) {
 
-    showImportStatus(
-        "Importazione del file in corso...",
-        "success"
+    console.log(
+        "File selezionato:",
+        file
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validazione iniziale
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        !file.name.match(
+            /\.(xlsx|xls)$/i
+        )
+    ) {
+
+        showImportStatus(
+            "Errore: il file selezionato non è un file Excel valido.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Avvio animazione
+    |--------------------------------------------------------------------------
+    */
+
+    startPackingListImportAnimation(
+        file
     );
 
 
     try {
+
+        updatePackingListImportAnimation(
+            "LETTURA FILE",
+            "Apertura del documento Excel..."
+        );
+
+
+        /*
+        |----------------------------------------------------------------------
+        | IMPORTAZIONE EXCEL
+        |----------------------------------------------------------------------
+        */
 
         const importedData =
             await PackingListImporter.importExcelFile(
@@ -2907,13 +4477,28 @@ async function processImportedFile(
             );
 
 
+        updatePackingListImportAnimation(
+            "LETTURA FILE",
+            `${importedData.rows.length} righe individuate`
+        );
+
+
         /*
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
         | NORMALIZZAZIONE
-        |--------------------------------------------------------------------------
-        | Trasforma le righe Excel in oggetti interni stabili.
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
         */
+
+        await waitForImportAnimation(
+            1250
+        );
+
+
+        updatePackingListImportAnimation(
+            "ANALISI ARTICOLI",
+            "Normalizzazione dei dati..."
+        );
+
 
         const normalizedRows =
             PackingListNormalizer.normalizeImportedRows(
@@ -2921,26 +4506,50 @@ async function processImportedFile(
             );
 
 
+        updatePackingListImportAnimation(
+            "ANALISI ARTICOLI",
+            `${normalizedRows.length} righe analizzate`
+        );
+
+
         /*
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
         | CLASSIFICAZIONE
-        |--------------------------------------------------------------------------
-        | Interpreta il CODE e determina:
-        |
-        | - root
-        | - tipo articolo
-        | - presenza ".C"
-        | - gruppo di posizionamento
-        | - spazio occupato
-        |
-        | Nessuna BOX viene ancora assegnata.
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
         */
+
+        await waitForImportAnimation(
+            1300
+        );
+
+
+        updatePackingListImportAnimation(
+            "CLASSIFICAZIONE",
+            "Identificazione di caschi e imbottiture..."
+        );
+
 
         const classifiedRows =
             PackingListClassifier.classifyRows(
                 normalizedRows
             );
+
+
+        /*
+        |----------------------------------------------------------------------
+        | REGOLE
+        |----------------------------------------------------------------------
+        */
+
+        await waitForImportAnimation(
+            1300
+        );
+
+
+        updatePackingListImportAnimation(
+            "APPLICAZIONE REGOLE",
+            "Organizzazione degli articoli..."
+        );
 
 
         const ruledRows =
@@ -2954,13 +4563,21 @@ async function processImportedFile(
 
 
         /*
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
         | BOX ENGINE
-        |--------------------------------------------------------------------------
-        | Costruisce le BOX sulla base delle righe
-        | classificate e regolamentate.
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
         */
+
+        await waitForImportAnimation(
+            1500
+        );
+
+
+        updatePackingListImportAnimation(
+            "GENERAZIONE BOX",
+            "Costruzione della Packing List..."
+        );
+
 
         const boxResult =
             PackingListBoxEngine.buildBoxes(
@@ -2980,260 +4597,152 @@ async function processImportedFile(
             boxResult.statistics;
 
 
-        console.log(
-            "RISULTATO BOX ENGINE:",
-            boxResult.statistics
-        );
-
-
-        console.table(
-            boxResult.boxes.map(
-                box => ({
-
-                    BOX:
-                        box.boxNumber,
-
-                    Caschi:
-                        box.helmets.length,
-
-                    "Articoli attached":
-                        box.attachedItems.length,
-
-                    "Articoli in coda":
-                        box.tailItems.length,
-
-                    "Spazio utilizzato":
-                        box.usedSpaceUnits,
-
-                    "Spazio disponibile":
-                        box.remainingSpaceUnits,
-
-                    Stato:
-                        box.status
-
-                })
-            )
-        );
-
-
-        console.log(
-            "ARTICOLI NON ASSEGNATI:",
-            boxResult.unassignedItems.length
-        );
-
-
-        console.table(
-            boxResult.unassignedItems.map(
-                item => ({
-
-                    Riga:
-                        item.sourceRow,
-
-                    Codice:
-                        item.code,
-
-                    Descrizione:
-                        item.description,
-
-                    Quantità:
-                        item.quantity,
-
-                    Root:
-                        item.root,
-
-                    Tipo:
-                        item.articleType,
-
-                    Regola:
-                        item.rule,
-
-                    ".C":
-                        item.hasC,
-
-                    "Fine BOX":
-                        item.goesToEnd,
-
-                    "Qualsiasi BOX":
-                        item.canUseAnyBox,
-
-                    "Spazio":
-                        item.occupancyUnits
-
-                })
-            )
-        );
-
-
         /*
-        |--------------------------------------------------------------------------
-        | DEBUG CLASSIFICAZIONE
-        |--------------------------------------------------------------------------
+        |----------------------------------------------------------------------
+        | DATI REALI PER ANIMAZIONE
+        |----------------------------------------------------------------------
         */
 
-        console.table(
-            ruledRows.map(
-                row => ({
+        const helmetCount =
+            (boxResult.boxes || []).reduce(
+                (
+                    total,
+                    box
+                ) => {
 
-                    Riga:
-                        row.sourceRow,
+                    return (
+                        total +
+                        (box.helmets || []).reduce(
+                            (
+                                boxTotal,
+                                helmet
+                            ) => {
 
-                    Codice:
-                        row.code,
+                                return (
+                                    boxTotal +
+                                    Number(
+                                        helmet.quantity || 0
+                                    )
+                                );
 
-                    Root:
-                        row.root,
+                            },
+                            0
+                        )
+                    );
 
-                    Tipo:
-                        row.articleType,
-
-                    Regola:
-                        row.rule,
-
-                    Ruolo:
-                        row.packingRole,
-
-                    ".C":
-                        row.hasC,
-
-                    "Fine BOX":
-                        row.goesToEnd,
-
-                    "Segue casco":
-                        row.followsHelmet,
-
-                    "Qualsiasi BOX":
-                        row.canUseAnyBox,
-
-                    "Spazio":
-                        row.occupancyUnits
-
-                })
-            )
-        );
-
-
-        const unknownRows =
-            ruledRows.filter(
-                row =>
-                    row.rule === "unknown"
+                },
+                0
             );
 
 
-        console.log(
-            "ARTICOLI CON ROOT NON ANCORA GESTITA:",
-            unknownRows.length
-        );
+        const boxCount =
+            boxResult.boxes
+                ? boxResult.boxes.length
+                : 0;
 
 
-        console.table(
-            unknownRows.map(
-                row => ({
-
-                    Riga:
-                        row.sourceRow,
-
-                    Codice:
-                        row.code,
-
-                    Descrizione:
-                        row.description,
-
-                    Quantità:
-                        row.quantity,
-
-                    Root:
-                        row.root,
-
-                    ".C":
-                        row.hasC
-
-                })
-            )
-        );
-
-
-        const unknownCodes = {};
-
-
-        unknownRows.forEach(
-            row => {
-
-                const code =
-                    row.code
-                    || "(CODICE VUOTO)";
-
-
-                if (
-                    !unknownCodes[code]
-                ) {
-
-                    unknownCodes[code] =
-                        0;
-
-                }
-
-
-                unknownCodes[code] +=
-                    row.quantity || 0;
-
+        updatePackingListImportAnimation(
+            "PACKING LIST PRONTA",
+            `${boxCount} BOX · ${helmetCount} CASCHI`,
+            {
+                boxCount,
+                helmetCount
             }
         );
 
 
-        console.table(
-            Object.entries(
-                unknownCodes
-            ).map(
-                (
-                    [codice, quantita]
-                ) => ({
-
-                    Codice:
-                        codice,
-
-                    Quantità:
-                        quantita
-
-                })
-            )
-        );
-
+        /*
+        |----------------------------------------------------------------------
+        | Salvataggio stato applicazione
+        |----------------------------------------------------------------------
+        */
 
         applicationState.importedData =
             importedData;
 
 
+        /*
+        |----------------------------------------------------------------------
+        | Aggiornamento interfaccia
+        |----------------------------------------------------------------------
+        */
+
         showImportStatus(
-            `File importato correttamente: ${importedData.rowCount} righe lette.`,
+            `Importazione completata: ${importedData.rows.length} righe elaborate.`,
             "success"
         );
 
 
-        setApplicationStatus(
-            "Dati importati",
-            "success"
+        updateImportWorkspace();
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Piccola pausa finale
+        |----------------------------------------------------------------------
+        |
+        | Serve esclusivamente a lasciare vedere il risultato dell'animazione.
+        |
+        */
+
+        await waitForImportAnimation(
+            1500
         );
 
-    } catch (
-        error
-    ) {
+
+        completePackingListImportAnimation();
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Apertura Packing List
+        |----------------------------------------------------------------------
+        */
+
+        await waitForImportAnimation(
+            1000
+        );
+
+
+        removePackingListImportAnimation();
+
+
+        initializeWorkspace(
+            "result"
+        );
+
+
+        console.log(
+            "Importazione Packing List completata.",
+            importedData
+        );
+
+
+    } catch (error) {
 
         console.error(
-            "Errore importazione:",
+            "Errore durante l'importazione:",
             error
         );
 
 
         showImportStatus(
-            error.message,
+            `Errore durante l'importazione: ${error.message}`,
             "error"
         );
 
 
-        setApplicationStatus(
-            "Errore importazione",
-            "danger"
+        showPackingListImportAnimationError(
+            error
         );
+
+
+        await waitForImportAnimation(
+            1800
+        );
+
+
+        removePackingListImportAnimation();
 
     }
 
