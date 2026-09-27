@@ -39,7 +39,7 @@ document.addEventListener(
 );
 
 
-function initializeApplication() {
+async function initializeApplication() {
 
     initializeNavigation();
 
@@ -51,6 +51,8 @@ function initializeApplication() {
         "Pronto",
         "success"
     );
+
+    await initializeApplicationVersion();
 
 }
 
@@ -5898,5 +5900,60 @@ function getExportQuantity(
 
 
     return value ?? "";
+
+}
+
+async function initializeApplicationVersion() {
+
+    const versionElement =
+        document.getElementById(
+            "application-version"
+        );
+
+
+    if (!versionElement) {
+
+        return;
+
+    }
+
+
+    if (
+        !window.productionAPI ||
+        typeof window.productionAPI.getAppVersion !==
+            "function"
+    ) {
+
+        versionElement.textContent =
+            "Versione -";
+
+        return;
+
+    }
+
+
+    try {
+
+        const version =
+            await window.productionAPI.getAppVersion();
+
+
+        versionElement.textContent =
+            "Versione " +
+            version;
+
+    }
+    catch (error) {
+
+        console.error(
+            "Impossibile recuperare la versione dell'applicazione:",
+            error
+        );
+
+
+        versionElement.textContent =
+            "Versione -";
+
+    }
 
 }
