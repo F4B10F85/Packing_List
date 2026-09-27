@@ -1,0 +1,27 @@
+{
+  "name": "packing_list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/F4B10F85/Packing_List.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/F4B10F85/Packing_List/issues"
+  },
+  "homepage": "https://github.com/F4B10F85/Packing_List#readme",
+  "devDependencies": {
+    "electron": "^44.4.5"
+  }
+}
