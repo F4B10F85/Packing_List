@@ -1085,3 +1085,168 @@
     background:
         #fafcfb;
 }
+
+
+/* ==========================================================================
+   DASHBOARD
+   ========================================================================== */
+
+.dashboard-workspace {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+
+.dashboard-instructions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 28px;
+}
+
+
+.instruction-card {
+    display: flex;
+    gap: 22px;
+    padding: 28px;
+}
+
+
+.instruction-number {
+    flex-shrink: 0;
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #00645a;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+.instruction-content {
+    flex: 1;
+}
+
+
+.instruction-content h3 {
+    margin: 0 0 10px 0;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.instruction-content p {
+    margin: 0 0 10px 0;
+
+    line-height: 1.6;
+}
+
+
+.instruction-content p:last-child {
+    margin-bottom: 0;
+}
+
+
+.instruction-content ul {
+    margin: 14px 0 0 18px;
+    padding: 0;
+}
+
+
+.instruction-content li {
+    margin-bottom: 7px;
+    line-height: 1.5;
+}
+
+
+.dashboard-rules-card {
+    margin-top: 20px;
+    padding: 28px;
+}
+
+
+.dashboard-section-title {
+    margin-bottom: 22px;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.dashboard-rules {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+
+.dashboard-rule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    border-radius: 10px;
+
+    background: #f5f6f6;
+}
+
+
+.dashboard-rule-number,
+.dashboard-rule-icon {
+    flex-shrink: 0;
+
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #00645a;
+    color: white;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+@media (max-width: 800px) {
+
+    .dashboard-instructions {
+        grid-template-columns: 1fr;
+    }
+
+
+    .dashboard-rules {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+#export-packing-list-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.export-excel-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+}

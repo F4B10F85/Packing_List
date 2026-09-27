@@ -44,7 +44,7 @@ function initializeApplication() {
     initializeNavigation();
 
     loadWorkspace(
-        "import"
+        "dashboard"
     );
 
     setApplicationStatus(
@@ -232,6 +232,9 @@ function getWorkspaceTitle(
 
     const titles = {
 
+        dashboard:
+            "Dashboard",
+        
         import:
             "Importazione",
 
@@ -269,6 +272,10 @@ function getWorkspaceContent(
 ) {
 
     switch (workspaceName) {
+
+        case "dashboard":
+
+            return getDashboardWorkspace();
 
         case "import":
 
@@ -679,7 +686,15 @@ function createPackingListResult(
                     id="export-packing-list-button"
                     onclick="startPackingListExportAnimation()"
                 >
-                    Esporta PACKINGLIST.xlsx
+                    <img
+                        src="assets/image/excel.png"
+                        alt=""
+                        class="export-excel-icon"
+                    >
+
+                    <span>
+                        Esporta PACKINGLIST
+                    </span>
                 </button>
             </div>
 
@@ -2539,6 +2554,295 @@ function getExportQuantity(
     return String(
         value
     );
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| Workspace Dashboard
+|--------------------------------------------------------------------------
+*/
+
+function getDashboardWorkspace() {
+
+    return `
+
+        <div class="dashboard-workspace">
+
+
+            <div class="workspace-heading">
+
+                <h2>
+                    Come utilizzare Packing List
+                </h2>
+
+                <p>
+                    Segui le istruzioni riportate di seguito
+                    per importare un file Excel, elaborare gli articoli
+                    e generare la Packing List.
+                </p>
+
+            </div>
+
+
+            <div class="dashboard-instructions">
+
+
+                <!--
+                |------------------------------------------------------------------
+                | PASSAGGIO 01
+                |------------------------------------------------------------------
+                -->
+
+                <div class="card instruction-card">
+
+                    <div class="instruction-number">
+                        01
+                    </div>
+
+                    <div class="instruction-content">
+
+                        <h3>
+                            Importa il file Excel
+                        </h3>
+
+                        <p>
+
+                            Accedi alla sezione
+                            <strong>Importazione</strong>
+                            e carica il file Excel contenente
+                            gli articoli da organizzare.
+
+                        </p>
+
+                        <p>
+
+                            Puoi trascinare il file direttamente
+                            nell'area di importazione oppure
+                            selezionarlo dal computer.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!--
+                |------------------------------------------------------------------
+                | PASSAGGIO 02
+                |------------------------------------------------------------------
+                -->
+
+                <div class="card instruction-card">
+
+                    <div class="instruction-number">
+                        02
+                    </div>
+
+                    <div class="instruction-content">
+
+                        <h3>
+                            Attendi l'elaborazione automatica
+                        </h3>
+
+                        <p>
+
+                            Dopo il caricamento, Packing List
+                            analizza automaticamente il file.
+
+                        </p>
+
+                        <ul>
+
+                            <li>
+                                legge gli articoli;
+                            </li>
+
+                            <li>
+                                identifica caschi e imbottiture;
+                            </li>
+
+                            <li>
+                                applica le regole di confezionamento;
+                            </li>
+
+                            <li>
+                                organizza gli articoli nelle BOX.
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+
+                <!--
+                |------------------------------------------------------------------
+                | PASSAGGIO 03
+                |------------------------------------------------------------------
+                -->
+
+                <div class="card instruction-card">
+
+                    <div class="instruction-number">
+                        03
+                    </div>
+
+                    <div class="instruction-content">
+
+                        <h3>
+                            Controlla la Packing List
+                        </h3>
+
+                        <p>
+
+                            Al termine dell'elaborazione viene
+                            visualizzato il risultato organizzato
+                            per BOX.
+
+                        </p>
+
+                        <p>
+
+                            Puoi verificare gli articoli,
+                            le quantità, i codici e le informazioni
+                            associate prima dell'esportazione.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!--
+                |------------------------------------------------------------------
+                | PASSAGGIO 04
+                |------------------------------------------------------------------
+                -->
+
+                <div class="card instruction-card">
+
+                    <div class="instruction-number">
+                        04
+                    </div>
+
+                    <div class="instruction-content">
+
+                        <h3>
+                            Esporta la Packing List
+                        </h3>
+
+                        <p>
+
+                            Quando il risultato è stato verificato,
+                            utilizza il pulsante
+
+                            <strong>
+                                Esporta PACKINGLIST.xlsx
+                            </strong>
+
+                            per generare il file Excel definitivo.
+
+                        </p>
+
+                        <p>
+
+                            Il file esportato contiene le BOX
+                            e tutti gli articoli organizzati
+                            secondo le regole impostate.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!--
+            |----------------------------------------------------------------------
+            | REGOLE PRINCIPALI
+            |----------------------------------------------------------------------
+            -->
+
+            <div class="card dashboard-rules-card">
+
+                <div class="dashboard-section-title">
+
+                    Regole principali
+
+                </div>
+
+
+                <div class="dashboard-rules">
+
+
+                    <div class="dashboard-rule">
+
+                        <span class="dashboard-rule-number">
+                            8
+                        </span>
+
+                        <span>
+                            massimo di caschi per BOX
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-rule">
+
+                        <span class="dashboard-rule-icon">
+                            ✓
+                        </span>
+
+                        <span>
+                            le imbottiture seguono il relativo casco
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-rule">
+
+                        <span class="dashboard-rule-icon">
+                            ✓
+                        </span>
+
+                        <span>
+                            gli articoli diversi da casco e imbottitura
+                            vengono raccolti nella BOX finale
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-rule">
+
+                        <span class="dashboard-rule-icon">
+                            ✓
+                        </span>
+
+                        <span>
+                            l'elaborazione viene eseguita automaticamente
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    `;
 
 }
 
