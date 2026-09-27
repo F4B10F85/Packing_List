@@ -330,7 +330,7 @@ function getResultWorkspace() {
             <div class="workspace-heading">
 
                 <h2>
-                    Packing List
+                    Esportazione Packing List
                 </h2>
 
                 <p>
@@ -2573,7 +2573,7 @@ function getDashboardWorkspace() {
             <div class="workspace-heading">
 
                 <h2>
-                    Come utilizzare Packing List
+                    Come utilizzare KEP Packing List
                 </h2>
 
                 <p>
@@ -2612,6 +2612,19 @@ function getDashboardWorkspace() {
                             <strong>Importazione</strong>
                             e carica il file Excel contenente
                             gli articoli da organizzare.
+
+                        </p>
+
+                        <p>
+
+                            Le colonne obbligatorie nel file excel sono:
+                            
+                        </p>
+
+                        <p>                            
+                            <strong style="color: #0f94dc;">
+                            Codice | Quantità | Rif. registrazione origine |<br> Descrizione Estesa | Personalizzazione | Riferimento Cliente
+                            </strong>
 
                         </p>
 
@@ -2740,8 +2753,8 @@ function getDashboardWorkspace() {
                             Quando il risultato è stato verificato,
                             utilizza il pulsante
 
-                            <strong>
-                                Esporta PACKINGLIST.xlsx
+                            <strong style="color: #0f94dc;">
+                                Esporta PACKINGLIST
                             </strong>
 
                             per generare il file Excel definitivo.
@@ -2789,7 +2802,7 @@ function getDashboardWorkspace() {
                         </span>
 
                         <span>
-                            massimo di caschi per BOX
+                            numero massimo di caschi per BOX
                         </span>
 
                     </div>
@@ -2830,6 +2843,7 @@ function getDashboardWorkspace() {
 
                         <span>
                             l'elaborazione viene eseguita automaticamente
+                            ed è possibile esportarla in un file Excel
                         </span>
 
                     </div>
