@@ -6,30 +6,13 @@
 |--------------------------------------------------------------------------
 | Questo modulo assegna gli articoli alle BOX.
 |
-| REGOLE ATTUALI
+| Il motore è comune a tutti i clienti.
 |
-| 1. I CASCHI sono gli unici articoli che consumano spazio BOX.
+| Le differenze relative alla capacità delle BOX vengono delegate
+| alle regole specifiche del cliente:
 |
-| 2. Ogni BOX può contenere massimo 8 caschi.
-|
-| 3. Le IMBOTTITURE associate a un casco:
-|    - seguono il casco;
-|    - non consumano spazio;
-|    - vengono divise insieme ai caschi quando il gruppo viene
-|      distribuito su più BOX.
-|
-| 4. Tutti gli articoli che non sono:
-|       - casco
-|       - imbottitura
-|
-|    vengono messi in UNA SOLA BOX FINALE.
-|
-| 5. Un'imbottitura senza un casco precedente associabile viene
-|    considerata articolo finale.
-|
-| 6. La quantità viene gestita realmente.
-|
-| 7. L'ordine delle righe sorgente viene mantenuto.
+|   STANDARD → rules.js
+|   CINA     → rules_cina.js
 |
 |--------------------------------------------------------------------------
 */
@@ -37,41 +20,22 @@
 
 /*
 |--------------------------------------------------------------------------
-| CONFIGURAZIONE
+| CONFIGURAZIONE STANDARD
+|--------------------------------------------------------------------------
+|
+| Questi valori rappresentano il comportamento storico STANDARD.
+|
+| IMPORTANTE:
+| STANDARD rimane il comportamento predefinito.
 |--------------------------------------------------------------------------
 */
 
 const BOX_ENGINE_CONFIG = {
 
-    /*
-    |----------------------------------------------------------------------
-    | Numero massimo di caschi per BOX
-    |----------------------------------------------------------------------
-    */
-
     MAX_HELMETS_PER_BOX: 8,
-
-
-    /*
-    |----------------------------------------------------------------------
-    | Unità di spazio
-    |----------------------------------------------------------------------
-    |
-    | Un casco = 60 unità
-    |
-    | La struttura viene mantenuta per compatibilità con il resto
-    | dell'applicazione.
-    |----------------------------------------------------------------------
-    */
 
     SPACE_UNITS_PER_HELMET: 60,
 
-
-    /*
-    |----------------------------------------------------------------------
-    | RADICI CASCHI
-    |----------------------------------------------------------------------
-    */
 
     HELMET_ROOTS: [
 
@@ -96,12 +60,6 @@ const BOX_ENGINE_CONFIG = {
     ],
 
 
-    /*
-    |----------------------------------------------------------------------
-    | RADICI IMBOTTITURE
-    |----------------------------------------------------------------------
-    */
-
     PADDING_ROOTS: [
 
         "CRX",
@@ -119,36 +77,77 @@ const BOX_ENGINE_CONFIG = {
 
 /*
 |--------------------------------------------------------------------------
-| ORDINA LE RADICI DALLA PIÙ SPECIFICA ALLA MENO SPECIFICA
+| NORMALIZZA IL CLIENTE
 |--------------------------------------------------------------------------
-|
-| Serve per evitare conflitti come:
-|
-|   CRX
-|   CRX2
-|   CRXU
-|
-| e:
-|
-|   KP
-|   KPT
-|
+*/
+
+function normalizeCustomer(
+    customer
+) {
+
+    if (
+        customer === null ||
+        customer === undefined
+    ) {
+
+        return "STANDARD";
+
+    }
+
+
+    const normalizedCustomer =
+        String(
+            customer
+        )
+            .trim()
+            .toUpperCase();
+
+
+    if (
+        normalizedCustomer === "CINA"
+    ) {
+
+        return "CINA";
+
+    }
+
+
+    return "STANDARD";
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| ORDINA LE RADICI
 |--------------------------------------------------------------------------
 */
 
 const HELMET_ROOTS_SORTED =
-    [...BOX_ENGINE_CONFIG.HELMET_ROOTS]
+    [
+        ...BOX_ENGINE_CONFIG.HELMET_ROOTS
+    ]
         .sort(
-            (a, b) =>
-                b.length - a.length
+            (
+                firstRoot,
+                secondRoot
+            ) =>
+                secondRoot.length -
+                firstRoot.length
         );
 
 
 const PADDING_ROOTS_SORTED =
-    [...BOX_ENGINE_CONFIG.PADDING_ROOTS]
+    [
+        ...BOX_ENGINE_CONFIG.PADDING_ROOTS
+    ]
         .sort(
-            (a, b) =>
-                b.length - a.length
+            (
+                firstRoot,
+                secondRoot
+            ) =>
+                secondRoot.length -
+                firstRoot.length
         );
 
 
@@ -185,32 +184,6 @@ function normalizeCode(
 |--------------------------------------------------------------------------
 | VERIFICA RADICE
 |--------------------------------------------------------------------------
-|
-| La radice deve essere:
-|
-|   CODICE = RADICE
-|
-| oppure:
-|
-|   CODICE = RADICE.qualcosa
-|
-| In questo modo:
-|
-|   CRL2.DBLU.M.0005
-|
-| corrisponde a:
-|
-|   CRL2
-|
-| ma:
-|
-|   CRL20
-|
-| NON corrisponde a:
-|
-|   CRL2
-|
-|--------------------------------------------------------------------------
 */
 
 function codeHasRoot(
@@ -243,16 +216,6 @@ function codeHasRoot(
 /*
 |--------------------------------------------------------------------------
 | CLASSIFICA DIRETTAMENTE IL CODICE
-|--------------------------------------------------------------------------
-|
-| Il Box Engine non si fida più delle vecchie regole di coda.
-|
-| Determina direttamente:
-|
-|   helmet
-|   padding
-|   other
-|
 |--------------------------------------------------------------------------
 */
 
@@ -320,10 +283,6 @@ function classifyCode(
 |--------------------------------------------------------------------------
 | OTTIENE LA QUANTITÀ DELLA RIGA
 |--------------------------------------------------------------------------
-|
-| Supportiamo i nomi più probabili utilizzati dal normalizzatore.
-|
-|--------------------------------------------------------------------------
 */
 
 function getRowQuantity(
@@ -382,12 +341,6 @@ function getRowQuantity(
     }
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Se la quantità non è presente assumiamo 1.
-    |----------------------------------------------------------------------
-    */
-
     return 1;
 
 }
@@ -412,21 +365,9 @@ function cloneRowWithQuantity(
     };
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Manteniamo la quantità nel campo principale utilizzato dall'app.
-    |----------------------------------------------------------------------
-    */
-
     clonedRow.quantity =
         quantity;
 
-
-    /*
-    |----------------------------------------------------------------------
-    | Manteniamo anche eventuali campi quantità esistenti.
-    |----------------------------------------------------------------------
-    */
 
     if (
         Object.prototype.hasOwnProperty.call(
@@ -493,16 +434,6 @@ function cloneRowWithQuantity(
     }
 
 
-    /*
-    |----------------------------------------------------------------------
-    | ID
-    |----------------------------------------------------------------------
-    |
-    | Quando una riga viene spezzata tra BOX diverse, creiamo un ID
-    | derivato per evitare collisioni.
-    |----------------------------------------------------------------------
-    */
-
     if (
         suffix !== undefined &&
         suffix !== null
@@ -530,85 +461,153 @@ function cloneRowWithQuantity(
 
 /*
 |--------------------------------------------------------------------------
+| OTTIENE LA CAPACITÀ DELLA BOX PER IL CLIENTE
+|--------------------------------------------------------------------------
+*/
+
+function getBoxCapacityForCustomer(
+    customer,
+    row
+) {
+
+    const normalizedCustomer =
+        normalizeCustomer(
+            customer
+        );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CINA
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        normalizedCustomer === "CINA" &&
+        window.PackingListRulesCina
+    ) {
+
+        return window.PackingListRulesCina
+            .getHelmetBoxCapacity(
+                row
+            );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STANDARD
+    |--------------------------------------------------------------------------
+    */
+
+    return BOX_ENGINE_CONFIG
+        .MAX_HELMETS_PER_BOX;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| OTTIENE LA CAPACITÀ DEL GRUPPO
+|--------------------------------------------------------------------------
+*/
+
+function getGroupBoxCapacity(
+    customer,
+    group
+) {
+
+    const normalizedCustomer =
+        normalizeCustomer(
+            customer
+        );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CINA
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        normalizedCustomer === "CINA" &&
+        window.PackingListRulesCina
+    ) {
+
+        return window.PackingListRulesCina
+            .getGroupBoxCapacity(
+                group
+            );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STANDARD
+    |--------------------------------------------------------------------------
+    */
+
+    return BOX_ENGINE_CONFIG
+        .MAX_HELMETS_PER_BOX;
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
 | CREA UNA NUOVA BOX
 |--------------------------------------------------------------------------
 */
 
 function createBox(
-    boxNumber
+    boxNumber,
+    capacity
 ) {
+
+    const maxHelmets =
+        capacity !== undefined &&
+        capacity !== null
+            ? capacity
+            : BOX_ENGINE_CONFIG
+                .MAX_HELMETS_PER_BOX;
+
 
     return {
 
         boxNumber,
 
-        /*
-        |------------------------------------------------------------------
-        | Caschi
-        |------------------------------------------------------------------
-        */
 
         helmets: [],
 
 
-        /*
-        |------------------------------------------------------------------
-        | Imbottiture associate
-        |------------------------------------------------------------------
-        */
-
         attachedItems: [],
 
-
-        /*
-        |------------------------------------------------------------------
-        | Articoli della BOX finale
-        |------------------------------------------------------------------
-        */
 
         tailItems: [],
 
 
-        /*
-        |------------------------------------------------------------------
-        | Tutti gli articoli nell'ordine effettivo di imballaggio
-        |------------------------------------------------------------------
-        |
-        | Questa proprietà viene aggiunta per mantenere l'ordine originale.
-        |
-        | Il vecchio frontend può continuare a utilizzare helmets,
-        | attachedItems e tailItems.
-        |
-        | Il frontend aggiornato può utilizzare direttamente items.
-        |
-        |------------------------------------------------------------------
-        */
-
         items: [],
 
 
-        /*
-        |------------------------------------------------------------------
-        | Spazio
-        |------------------------------------------------------------------
-        */
-
         usedSpaceUnits: 0,
 
+
         capacityUnits:
-            BOX_ENGINE_CONFIG.MAX_HELMETS_PER_BOX *
-            BOX_ENGINE_CONFIG.SPACE_UNITS_PER_HELMET,
+            maxHelmets *
+            BOX_ENGINE_CONFIG
+                .SPACE_UNITS_PER_HELMET,
+
 
         remainingSpaceUnits:
-            BOX_ENGINE_CONFIG.MAX_HELMETS_PER_BOX *
-            BOX_ENGINE_CONFIG.SPACE_UNITS_PER_HELMET,
+            maxHelmets *
+            BOX_ENGINE_CONFIG
+                .SPACE_UNITS_PER_HELMET,
 
 
-        /*
-        |------------------------------------------------------------------
-        | Controllo
-        |------------------------------------------------------------------
-        */
+        maxHelmets,
+
 
         status: "open"
 
@@ -683,10 +682,17 @@ function addHelmetToBox(
         );
 
 
+    const boxCapacity =
+        box.maxHelmets !== undefined
+            ? box.maxHelmets
+            : BOX_ENGINE_CONFIG
+                .MAX_HELMETS_PER_BOX;
+
+
     if (
         currentHelmetQuantity +
         quantity >
-        BOX_ENGINE_CONFIG.MAX_HELMETS_PER_BOX
+        boxCapacity
     ) {
 
         return false;
@@ -696,7 +702,8 @@ function addHelmetToBox(
 
     const requiredSpace =
         quantity *
-        BOX_ENGINE_CONFIG.SPACE_UNITS_PER_HELMET;
+        BOX_ENGINE_CONFIG
+            .SPACE_UNITS_PER_HELMET;
 
 
     if (
@@ -755,12 +762,6 @@ function addAttachedItemToBox(
     );
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Le imbottiture NON consumano spazio.
-    |----------------------------------------------------------------------
-    */
-
     return true;
 
 }
@@ -787,17 +788,6 @@ function addTailItemToBox(
     );
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Gli articoli finali non modificano lo spazio dei caschi.
-    |
-    | Questa è una scelta intenzionale secondo la nuova regola:
-    |
-    | "Tutto il resto va in una singola BOX finale, indipendentemente
-    | dalla quantità."
-    |----------------------------------------------------------------------
-    */
-
     return true;
 
 }
@@ -805,12 +795,13 @@ function addTailItemToBox(
 
 /*
 |--------------------------------------------------------------------------
-| CREA UNA NUOVA BOX
+| CREA LA BOX SUCCESSIVA
 |--------------------------------------------------------------------------
 */
 
 function createNextBox(
-    boxes
+    boxes,
+    capacity
 ) {
 
     const boxNumber =
@@ -819,7 +810,8 @@ function createNextBox(
 
     const box =
         createBox(
-            boxNumber
+            boxNumber,
+            capacity
         );
 
 
@@ -836,22 +828,6 @@ function createNextBox(
 /*
 |--------------------------------------------------------------------------
 | COSTRUISCE I GRUPPI CASCO + IMBOTTITURE
-|--------------------------------------------------------------------------
-|
-| Esempio:
-|
-|   CRL2........      3
-|   CRXU.PAD52       2
-|   CRXU.PAD57       1
-|
-| diventa:
-|
-|   Gruppo
-|       casco = 3
-|       padding:
-|           PAD52 = 2
-|           PAD57 = 1
-|
 |--------------------------------------------------------------------------
 */
 
@@ -873,12 +849,6 @@ function buildHelmetGroups(
                 row.code
             );
 
-
-        /*
-        |------------------------------------------------------------------
-        | CASCO
-        |------------------------------------------------------------------
-        */
 
         if (
             articleType === "helmet"
@@ -912,19 +882,6 @@ function buildHelmetGroups(
         }
 
 
-        /*
-        |------------------------------------------------------------------
-        | IMBOTTITURA
-        |------------------------------------------------------------------
-        |
-        | Una padding immediatamente successiva al casco appartiene
-        | a quel gruppo.
-        |
-        | Non guardiamo più ".C": questa distinzione non fa più parte
-        | delle regole attuali.
-        |------------------------------------------------------------------
-        */
-
         if (
             articleType === "padding"
         ) {
@@ -952,26 +909,10 @@ function buildHelmetGroups(
             }
 
 
-            /*
-            |----------------------------------------------------------------
-            | Se non esiste un casco precedente, la padding sarà trattata
-            | successivamente come articolo finale.
-            |----------------------------------------------------------------
-            */
-
             continue;
 
         }
 
-
-        /*
-        |------------------------------------------------------------------
-        | ARTICOLO DIVERSO
-        |------------------------------------------------------------------
-        |
-        | Un articolo diverso interrompe il legame con il casco precedente.
-        |------------------------------------------------------------------
-        */
 
         currentGroup = null;
 
@@ -986,9 +927,6 @@ function buildHelmetGroups(
 /*
 |--------------------------------------------------------------------------
 | TROVA LE PADDING ORFANE
-|--------------------------------------------------------------------------
-|
-| Sono padding che non hanno un casco immediatamente precedente.
 |--------------------------------------------------------------------------
 */
 
@@ -1042,12 +980,6 @@ function findOrphanPaddings(
         }
 
 
-        /*
-        |------------------------------------------------------------------
-        | Qualsiasi altro articolo interrompe il collegamento.
-        |------------------------------------------------------------------
-        */
-
         previousWasHelmet = false;
 
     }
@@ -1062,47 +994,17 @@ function findOrphanPaddings(
 |--------------------------------------------------------------------------
 | DISTRIBUISCE UN GRUPPO CASCO NELLE BOX
 |--------------------------------------------------------------------------
-|
-| Questa è la parte fondamentale del nuovo motore.
-|
-| Esempio:
-|
-| BOX corrente:
-|   7 caschi
-|
-| Gruppo:
-|   3 caschi
-|   2 PAD52
-|   1 PAD57
-|
-| Risultato:
-|
-| BOX X:
-|   1 casco
-|   1 PAD52
-|
-| BOX X+1:
-|   2 caschi
-|   1 PAD52
-|   1 PAD57
-|
-|--------------------------------------------------------------------------
 */
 
 function distributeHelmetGroup(
     group,
-    boxes
+    boxes,
+    customer
 ) {
 
     let remainingHelmetQuantity =
         group.helmetQuantity;
 
-
-    /*
-    |----------------------------------------------------------------------
-    | Quantità residue delle padding.
-    |----------------------------------------------------------------------
-    */
 
     const remainingPaddings =
         group.paddings.map(
@@ -1121,6 +1023,28 @@ function distributeHelmetGroup(
     let splitIndex = 0;
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | CAPACITÀ DEL GRUPPO
+    |--------------------------------------------------------------------------
+    |
+    | STANDARD:
+    |   8
+    |
+    | CINA:
+    |   10 oppure 12
+    |
+    | La capacità viene fissata per tutto il gruppo.
+    |--------------------------------------------------------------------------
+    */
+
+    const groupCapacity =
+        getGroupBoxCapacity(
+            customer,
+            group
+        );
+
+
     while (
         remainingHelmetQuantity > 0
     ) {
@@ -1134,46 +1058,60 @@ function distributeHelmetGroup(
 
 
         /*
-        |------------------------------------------------------------------
-        | Se non esiste una BOX o è piena, creiamo una nuova BOX.
-        |------------------------------------------------------------------
+        |--------------------------------------------------------------------------
+        | La BOX corrente può essere utilizzata solo se appartiene allo
+        | stesso tipo di capacità del gruppo.
+        |--------------------------------------------------------------------------
         */
 
-        const currentHelmetQuantity =
+        const currentBoxCapacity =
             currentBox === null
-                ? 0
-                : currentBox.helmets.reduce(
-                    (
-                        total,
-                        item
-                    ) =>
-                        total +
-                        getRowQuantity(
-                            item
-                        ),
-                    0
-                );
+                ? null
+                : currentBox.maxHelmets;
 
 
         if (
             currentBox === null ||
-            currentHelmetQuantity >=
-            BOX_ENGINE_CONFIG.MAX_HELMETS_PER_BOX
+            currentBoxCapacity !==
+            groupCapacity
         ) {
 
             currentBox =
                 createNextBox(
-                    boxes
+                    boxes,
+                    groupCapacity
                 );
 
         }
 
 
-        /*
-        |------------------------------------------------------------------
-        | Spazi disponibili nella BOX.
-        |------------------------------------------------------------------
-        */
+        const currentHelmetQuantity =
+            currentBox.helmets.reduce(
+                (
+                    total,
+                    item
+                ) =>
+                    total +
+                    getRowQuantity(
+                        item
+                    ),
+                0
+            );
+
+
+        if (
+            currentHelmetQuantity >=
+            groupCapacity
+        ) {
+
+            currentBox =
+                createNextBox(
+                    boxes,
+                    groupCapacity
+                );
+
+        }
+
 
         const helmetsAlreadyInBox =
             currentBox.helmets.reduce(
@@ -1190,7 +1128,7 @@ function distributeHelmetGroup(
 
 
         const availableHelmetSlots =
-            BOX_ENGINE_CONFIG.MAX_HELMETS_PER_BOX -
+            groupCapacity -
             helmetsAlreadyInBox;
 
 
@@ -1201,11 +1139,20 @@ function distributeHelmetGroup(
             );
 
 
-        /*
-        |------------------------------------------------------------------
-        | CREA RIGA CASCO SPLITTATA
-        |------------------------------------------------------------------
-        */
+        if (
+            helmetsForThisBox <= 0
+        ) {
+
+            currentBox =
+                createNextBox(
+                    boxes,
+                    groupCapacity
+                );
+
+            continue;
+
+        }
+
 
         const helmetPart =
             cloneRowWithQuantity(
@@ -1224,18 +1171,6 @@ function distributeHelmetGroup(
             helmetPart
         );
 
-
-        /*
-        |------------------------------------------------------------------
-        | DISTRIBUZIONE DELLE PADDING
-        |------------------------------------------------------------------
-        |
-        | Per ogni BOX assegnamo al massimo una quantità di padding pari
-        | ai caschi presenti in quella parte del gruppo.
-        |
-        | Questo mantiene il rapporto casco → padding.
-        |------------------------------------------------------------------
-        */
 
         let paddingSlotsAvailable =
             helmetsForThisBox;
@@ -1307,12 +1242,6 @@ function distributeHelmetGroup(
         }
 
 
-        /*
-        |------------------------------------------------------------------
-        | Aggiorniamo il residuo del gruppo.
-        |------------------------------------------------------------------
-        */
-
         remainingHelmetQuantity -=
             helmetsForThisBox;
 
@@ -1321,18 +1250,6 @@ function distributeHelmetGroup(
 
     }
 
-
-    /*
-    |----------------------------------------------------------------------
-    | EVENTUALI PADDING ECCEDENTI
-    |----------------------------------------------------------------------
-    |
-    | Se esistono più padding rispetto ai caschi disponibili, non li
-    | perdiamo.
-    |
-    | Vanno nella BOX finale insieme agli altri articoli.
-    |----------------------------------------------------------------------
-    */
 
     const excessPaddings = [];
 
@@ -1367,17 +1284,6 @@ function distributeHelmetGroup(
 |--------------------------------------------------------------------------
 | CREA LA BOX FINALE
 |--------------------------------------------------------------------------
-|
-| Tutto ciò che non è:
-|
-|   - casco
-|   - imbottitura associata
-|
-| finisce qui.
-|
-| UNA SOLA BOX.
-|
-|--------------------------------------------------------------------------
 */
 
 function createFinalBox(
@@ -1394,9 +1300,20 @@ function createFinalBox(
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | La BOX finale non ha una capacità casco significativa.
+    |
+    | Manteniamo comunque una capacità numerica coerente per non rompere
+    | il modello dati esistente.
+    |--------------------------------------------------------------------------
+    */
+
     const finalBox =
         createNextBox(
-            boxes
+            boxes,
+            BOX_ENGINE_CONFIG
+                .MAX_HELMETS_PER_BOX
         );
 
 
@@ -1438,11 +1355,6 @@ function createFinalBox(
 |--------------------------------------------------------------------------
 | RACCOLTA DEGLI ARTICOLI FINALI
 |--------------------------------------------------------------------------
-|
-| Gli articoli finali vengono raccolti mantenendo esattamente l'ordine
-| della sorgente.
-|
-|--------------------------------------------------------------------------
 */
 
 function collectFinalItems(
@@ -1453,22 +1365,9 @@ function collectFinalItems(
     const finalItems = [];
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Prima raccogliamo gli ID delle padding che sono state associate
-    | correttamente ai caschi.
-    |----------------------------------------------------------------------
-    */
-
     const associatedPaddingRows =
         new Set();
 
-
-    /*
-    |----------------------------------------------------------------------
-    | Costruiamo i gruppi per identificare le padding associate.
-    |----------------------------------------------------------------------
-    */
 
     const groups =
         buildHelmetGroups(
@@ -1493,12 +1392,6 @@ function collectFinalItems(
     }
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Gli articoli "other" vanno tutti nella BOX finale.
-    |----------------------------------------------------------------------
-    */
-
     for (
         const row of rows
     ) {
@@ -1522,12 +1415,6 @@ function collectFinalItems(
         }
 
 
-        /*
-        |------------------------------------------------------------------
-        | Padding non associate.
-        |------------------------------------------------------------------
-        */
-
         if (
             articleType === "padding" &&
             !associatedPaddingRows.has(
@@ -1543,17 +1430,6 @@ function collectFinalItems(
 
     }
 
-
-    /*
-    |----------------------------------------------------------------------
-    | Padding eccedenti.
-    |----------------------------------------------------------------------
-    |
-    | Vengono aggiunte alla fine della lista.
-    |
-    | Non vengono perse.
-    |----------------------------------------------------------------------
-    */
 
     for (
         const excessPadding of excessPaddings
@@ -1604,9 +1480,16 @@ function finalizeBoxes(
             );
 
 
+        const boxCapacity =
+            box.maxHelmets !== undefined
+                ? box.maxHelmets
+                : BOX_ENGINE_CONFIG
+                    .MAX_HELMETS_PER_BOX;
+
+
         if (
             helmetCount >=
-            BOX_ENGINE_CONFIG.MAX_HELMETS_PER_BOX
+            boxCapacity
         ) {
 
             box.status =
@@ -1745,10 +1628,22 @@ function validateHelmetAssignment(
 |--------------------------------------------------------------------------
 | MOTORE PRINCIPALE
 |--------------------------------------------------------------------------
+|
+| customer:
+|
+|   "STANDARD" → comportamento storico
+|   "CINA"     → regole CINA
+|
+| Se customer non viene specificato:
+|
+|   STANDARD
+|
+|--------------------------------------------------------------------------
 */
 
 function buildBoxes(
-    rows
+    rows,
+    customer
 ) {
 
     if (
@@ -1764,10 +1659,16 @@ function buildBoxes(
     }
 
 
+    const normalizedCustomer =
+        normalizeCustomer(
+            customer
+        );
+
+
     /*
-    |----------------------------------------------------------------------
-    | 1. Creiamo una copia logica delle righe con classificazione diretta.
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | CLASSIFICAZIONE
+    |--------------------------------------------------------------------------
     */
 
     const workingRows =
@@ -1786,9 +1687,9 @@ function buildBoxes(
 
 
     /*
-    |----------------------------------------------------------------------
-    | 2. Costruiamo i gruppi casco + imbottiture.
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | GRUPPI CASCO + IMBOTTITURE
+    |--------------------------------------------------------------------------
     */
 
     const helmetGroups =
@@ -1798,9 +1699,9 @@ function buildBoxes(
 
 
     /*
-    |----------------------------------------------------------------------
-    | 3. Creiamo le BOX dei caschi.
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | BOX CASCHI
+    |--------------------------------------------------------------------------
     */
 
     const boxes = [];
@@ -1816,7 +1717,8 @@ function buildBoxes(
         const groupExcessPaddings =
             distributeHelmetGroup(
                 group,
-                boxes
+                boxes,
+                normalizedCustomer
             );
 
 
@@ -1828,9 +1730,9 @@ function buildBoxes(
 
 
     /*
-    |----------------------------------------------------------------------
-    | 4. Raccogliamo tutto ciò che deve finire nella BOX finale.
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | ARTICOLI FINALI
+    |--------------------------------------------------------------------------
     */
 
     const finalItems =
@@ -1841,18 +1743,8 @@ function buildBoxes(
 
 
     /*
-    |----------------------------------------------------------------------
-    | 5. Creiamo UNA SOLA BOX finale.
-    |----------------------------------------------------------------------
-    |
-    | Se non ci sono caschi:
-    |
-    |   BOX 1 = articoli finali
-    |
-    | Se esistono già BOX casco:
-    |
-    |   BOX successiva = articoli finali
-    |
+    |--------------------------------------------------------------------------
+    | BOX FINALE
     |--------------------------------------------------------------------------
     */
 
@@ -1863,9 +1755,9 @@ function buildBoxes(
 
 
     /*
-    |----------------------------------------------------------------------
-    | 6. Finalizzazione.
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | FINALIZZAZIONE
+    |--------------------------------------------------------------------------
     */
 
     finalizeBoxes(
@@ -1874,9 +1766,9 @@ function buildBoxes(
 
 
     /*
-    |----------------------------------------------------------------------
-    | 7. Controllo integrità caschi.
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | CONTROLLO INTEGRITÀ
+    |--------------------------------------------------------------------------
     */
 
     validateHelmetAssignment(
@@ -1886,9 +1778,9 @@ function buildBoxes(
 
 
     /*
-    |----------------------------------------------------------------------
-    | 8. STATISTICHE
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | STATISTICHE
+    |--------------------------------------------------------------------------
     */
 
     const helmetCount =
@@ -1901,6 +1793,9 @@ function buildBoxes(
 
 
     return {
+
+        customer:
+            normalizedCustomer,
 
         boxes,
 
@@ -1939,6 +1834,10 @@ window.PackingListBoxEngine = {
     buildBoxes,
 
     createBox,
+
+    getBoxCapacityForCustomer,
+
+    getGroupBoxCapacity,
 
     constants:
         BOX_ENGINE_CONFIG

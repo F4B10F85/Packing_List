@@ -18,12 +18,9 @@
 */
 
 const applicationState = {
-
     importedData: null,
-
-    currentWorkspace:
-        "import"
-
+    currentWorkspace: "import",
+    customer: "STANDARD"
 };
 
 
@@ -40,6 +37,8 @@ document.addEventListener(
 
 
 async function initializeApplication() {
+
+    injectCustomerSelectionStyles();
 
     initializeNavigation();
 
@@ -2871,27 +2870,142 @@ function getDashboardWorkspace() {
 
 function getImportWorkspace() {
 
+    const selectedCustomer =
+        applicationState.customer || "STANDARD";
+
+
     return `
-
         <div class="import-workspace">
-
 
             <div class="workspace-heading">
 
-                <h2>
-                    Importazione dati
-                </h2>
+                <h2>Importazione dati</h2>
 
                 <p>
-
-                    Carica il file Excel contenente
-                    gli articoli da organizzare nella
-                    Packing List.
-
+                    Carica il file Excel contenente gli articoli
+                    da organizzare nella Packing List.
                 </p>
 
             </div>
 
+
+            <!--
+            |--------------------------------------------------------------------------
+            | Cliente
+            |--------------------------------------------------------------------------
+            |
+            | La scelta del cliente viene effettuata prima
+            | dell'elaborazione del file.
+            |
+            -->
+
+            <div class="card customer-selection-card">
+
+                <div class="customer-selection-header">
+
+                    <div>
+
+                        <div class="customer-selection-eyebrow">
+                            CLIENTE
+                        </div>
+
+                        <h3 class="customer-selection-title">
+                            Seleziona il cliente
+                        </h3>
+
+                        <p class="customer-selection-description">
+                            Le regole di composizione delle BOX
+                            verranno applicate in base al cliente selezionato.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="customer-selection-options">
+
+                    <label
+                        class="customer-selection-option ${
+                            selectedCustomer === "STANDARD"
+                                ? "is-selected"
+                                : ""
+                        }"
+                    >
+
+                        <input
+                            type="radio"
+                            name="customer-selection"
+                            value="STANDARD"
+                            ${
+                                selectedCustomer === "STANDARD"
+                                    ? "checked"
+                                    : ""
+                            }
+                        >
+
+                        <span class="customer-selection-radio"></span>
+
+                        <span class="customer-selection-content">
+
+                            <span class="customer-selection-name">
+                                STANDARD
+                            </span>
+
+                            <span class="customer-selection-info">
+                                Regole standard di imballaggio
+                            </span>
+
+                        </span>
+
+                    </label>
+
+
+                    <label
+                        class="customer-selection-option ${
+                            selectedCustomer === "CINA"
+                                ? "is-selected"
+                                : ""
+                        }"
+                    >
+
+                        <input
+                            type="radio"
+                            name="customer-selection"
+                            value="CINA"
+                            ${
+                                selectedCustomer === "CINA"
+                                    ? "checked"
+                                    : ""
+                            }
+                        >
+
+                        <span class="customer-selection-radio"></span>
+
+                        <span class="customer-selection-content">
+
+                            <span class="customer-selection-name">
+                                CINA
+                            </span>
+
+                            <span class="customer-selection-info">
+                                Regole specifiche cliente CINA
+                            </span>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!--
+            |--------------------------------------------------------------------------
+            | Importazione Excel
+            |--------------------------------------------------------------------------
+            -->
 
             <div
                 class="card"
@@ -2915,10 +3029,7 @@ function getImportWorkspace() {
                         </div>
 
                         <div class="import-description">
-
-                            Trascina qui il file oppure
-                            fai clic per selezionarlo
-
+                            Trascina qui il file oppure fai clic per selezionarlo
                         </div>
 
                     </div>
@@ -2955,7 +3066,6 @@ function getImportWorkspace() {
                         id="import-file-name"
                     ></div>
 
-
                     <div
                         class="import-file-meta"
                         id="import-file-meta"
@@ -2969,9 +3079,7 @@ function getImportWorkspace() {
                     class="button button-secondary"
                     id="remove-import-button"
                 >
-
                     Rimuovi
-
                 </button>
 
             </div>
@@ -2983,11 +3091,8 @@ function getImportWorkspace() {
                 style="display: none;"
             ></div>
 
-
         </div>
-
     `;
-
 }
 
 
@@ -3017,12 +3122,45 @@ function initializeImportWorkspace() {
         );
 
 
-    if (!fileInput || !dropzone) {
+    const customerOptions =
+        document.querySelectorAll(
+            'input[name="customer-selection"]'
+        );
+
+
+    if (
+        !fileInput ||
+        !dropzone
+    ) {
 
         return;
 
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Selezione cliente
+    |--------------------------------------------------------------------------
+    */
+
+    customerOptions.forEach(
+        (customerOption) => {
+
+            customerOption.addEventListener(
+                "change",
+                handleCustomerSelection
+            );
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Importazione file
+    |--------------------------------------------------------------------------
+    */
 
     fileInput.addEventListener(
         "change",
@@ -3059,6 +3197,84 @@ function initializeImportWorkspace() {
 
 
     updateImportWorkspace();
+
+}
+
+function handleCustomerSelection(
+    event
+) {
+
+    const selectedCustomer =
+        event.target.value;
+
+
+    if (
+        selectedCustomer !== "STANDARD" &&
+        selectedCustomer !== "CINA"
+    ) {
+
+        return;
+
+    }
+
+
+    applicationState.customer =
+        selectedCustomer;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Aggiornamento visivo delle card
+    |--------------------------------------------------------------------------
+    */
+
+    const customerOptions =
+        document.querySelectorAll(
+            ".customer-selection-option"
+        );
+
+
+    customerOptions.forEach(
+        (customerOption) => {
+
+            const input =
+                customerOption.querySelector(
+                    'input[name="customer-selection"]'
+                );
+
+
+            if (!input) {
+
+                return;
+
+            }
+
+
+            customerOption.classList.toggle(
+                "is-selected",
+                input.value === selectedCustomer
+            );
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Stato applicazione
+    |--------------------------------------------------------------------------
+    */
+
+    setApplicationStatus(
+        `Cliente selezionato: ${selectedCustomer}`,
+        "success"
+    );
+
+
+    console.log(
+        "Cliente selezionato:",
+        selectedCustomer
+    );
 
 }
 
@@ -4895,13 +5111,14 @@ async function processImportedFile(
 
         updatePackingListImportAnimation(
             "GENERAZIONE BOX",
-            "Costruzione della Packing List..."
-        );
+            `Costruzione della Packing List per cliente ${applicationState.customer}...`
+        )
 
 
         const boxResult =
             PackingListBoxEngine.buildBoxes(
-                ruledRows
+                ruledRows,
+                applicationState.customer
             );
 
 
@@ -4963,7 +5180,7 @@ async function processImportedFile(
 
         updatePackingListImportAnimation(
             "PACKING LIST PRONTA",
-            `${boxCount} BOX · ${helmetCount} CASCHI`,
+            `${applicationState.customer} · ${boxCount} BOX · ${helmetCount} CASCHI`,
             {
                 boxCount,
                 helmetCount
@@ -5955,5 +6172,240 @@ async function initializeApplicationVersion() {
             "Versione -";
 
     }
+
+}
+
+function injectCustomerSelectionStyles() {
+
+    if (
+        document.getElementById(
+            "customer-selection-styles"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+
+    style.id =
+        "customer-selection-styles";
+
+
+    style.textContent = `
+
+        .customer-selection-card {
+
+            padding: 26px 30px;
+
+        }
+
+
+        .customer-selection-header {
+
+            margin-bottom: 22px;
+
+        }
+
+
+        .customer-selection-eyebrow {
+
+            margin-bottom: 6px;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.18em;
+
+            color: #00645a;
+
+        }
+
+
+        .customer-selection-title {
+
+            margin: 0;
+
+            font-size: 20px;
+
+            font-weight: 700;
+
+        }
+
+
+        .customer-selection-description {
+
+            margin: 7px 0 0;
+
+            color: var(--color-text-secondary);
+
+            font-size: 13px;
+
+        }
+
+
+        .customer-selection-options {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 14px;
+
+        }
+
+
+        .customer-selection-option {
+
+            position: relative;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 17px 18px;
+
+            border: 1px solid
+                var(--color-border);
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            background: #ffffff;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+
+        }
+
+
+        .customer-selection-option:hover {
+
+            border-color: #00645a;
+
+        }
+
+
+        .customer-selection-option.is-selected {
+
+            border-color: #00645a;
+
+            background:
+                rgba(0, 100, 90, 0.045);
+
+            box-shadow:
+                0 0 0 1px
+                rgba(0, 100, 90, 0.08);
+
+        }
+
+
+        .customer-selection-option input {
+
+            position: absolute;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+        }
+
+
+        .customer-selection-radio {
+
+            flex: 0 0 auto;
+
+            width: 18px;
+
+            height: 18px;
+
+            border: 2px solid
+                #b7c7c4;
+
+            border-radius: 50%;
+
+            box-sizing: border-box;
+
+            transition:
+                border-color 0.2s ease;
+
+        }
+
+
+        .customer-selection-option.is-selected
+        .customer-selection-radio {
+
+            border-color: #00645a;
+
+            box-shadow:
+                inset 0 0 0 4px #ffffff;
+
+            background:
+                #00645a;
+
+        }
+
+
+        .customer-selection-content {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 3px;
+
+        }
+
+
+        .customer-selection-name {
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.04em;
+
+        }
+
+
+        .customer-selection-info {
+
+            font-size: 12px;
+
+            color: var(--color-text-secondary);
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .customer-selection-options {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(
+        style
+    );
 
 }
