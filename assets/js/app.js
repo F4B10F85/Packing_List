@@ -2611,7 +2611,18 @@ function getDashboardWorkspace() {
 
                             Accedi alla sezione
                             <strong>Importazione</strong>
-                            e carica il file Excel contenente
+
+                        </p>
+
+                        <p>
+
+                            Seleziona il tipo di cliente "<strong>STANDARD</strong>" o "<strong>CINA</strong>"
+
+                        </p>
+
+                        <p>
+
+                            Carica il file Excel contenente
                             gli articoli da organizzare.
 
                         </p>
@@ -2799,11 +2810,12 @@ function getDashboardWorkspace() {
                     <div class="dashboard-rule">
 
                         <span class="dashboard-rule-number">
-                            8
+                            ✓
                         </span>
 
                         <span>
-                            numero massimo di caschi per BOX
+                            8 caschi per BOX per cliente STANDARD<br>
+                            10 o 12 caschi per BOX per cliente CINA
                         </span>
 
                     </div>
