@@ -1,5 +1,6 @@
 "use strict";
 
+
 /*
 |--------------------------------------------------------------------------
 | Packing List - Rules CINA
@@ -115,6 +116,20 @@ function isCrs2WithFourFinalDigits(
 }
 
 
+function isCarbHelmet(row) {
+
+    const code =
+        row &&
+        row.code !== undefined
+            ? String(row.code)
+                .trim()
+                .toUpperCase()
+            : "";
+
+    return code.startsWith("CARB");
+}
+
+
 /*
 |--------------------------------------------------------------------------
 | DETERMINA LA CAPACITÀ DEL CASCO
@@ -130,75 +145,64 @@ function isCrs2WithFourFinalDigits(
 |--------------------------------------------------------------------------
 */
 
-function getHelmetBoxCapacity(
+function getCinaHelmetBoxCapacity(
     row
 ) {
-
+    
     if (
         !row ||
         row.articleType !== "helmet"
     ) {
-
         return PACKING_RULES_CINA
             .BOX_MAX_HELMETS_DEFAULT;
-
     }
 
+    if (
+        isCarbHelmet(row)
+    ) {
+
+        return PACKING_RULES_CINA
+            .BOX_MAX_HELMETS_10;
+    }
 
     if (
         row.root === "NOVA"
     ) {
-
         return PACKING_RULES_CINA
             .BOX_MAX_HELMETS_12;
-
     }
-
 
     if (
         row.root === "CRB2"
     ) {
-
         return PACKING_RULES_CINA
             .BOX_MAX_HELMETS_12;
-
     }
 
     if (
         row.root === "CRABS"
     ) {
-
         return PACKING_RULES_CINA
             .BOX_MAX_HELMETS_12;
-
     }
-
 
     if (
         row.root === "CRS2"
     ) {
 
         if (
-            isCrs2WithFourFinalDigits(
-                row
-            )
+            isCrs2WithFourFinalDigits(row)
         ) {
-
             return PACKING_RULES_CINA
                 .BOX_MAX_HELMETS_10;
-
         }
-
 
         return PACKING_RULES_CINA
             .BOX_MAX_HELMETS_12;
-
     }
-
 
     return PACKING_RULES_CINA
         .BOX_MAX_HELMETS_DEFAULT;
-
 }
 
 
@@ -232,9 +236,7 @@ function getGroupBoxCapacity(
 
     }
 
-
     const helmets = [];
-
 
     if (
         group.helmet
@@ -245,7 +247,6 @@ function getGroupBoxCapacity(
         );
 
     }
-
 
     if (
         Array.isArray(
@@ -258,7 +259,6 @@ function getGroupBoxCapacity(
         );
 
     }
-
 
     if (
         helmets.length === 0
@@ -274,10 +274,13 @@ function getGroupBoxCapacity(
         const helmet of helmets
     ) {
 
-        if (
-            getHelmetBoxCapacity(
+        const capacity =
+            getCinaHelmetBoxCapacity(
                 helmet
-            ) ===
+            );
+
+        if (
+            capacity ===
             PACKING_RULES_CINA
                 .BOX_MAX_HELMETS_10
         ) {
@@ -288,7 +291,6 @@ function getGroupBoxCapacity(
         }
 
     }
-
 
     return PACKING_RULES_CINA
         .BOX_MAX_HELMETS_12;
@@ -303,14 +305,11 @@ function getGroupBoxCapacity(
 */
 
 window.PackingListRulesCina = {
-
-    getHelmetBoxCapacity,
-
+    getHelmetBoxCapacity:
+        getCinaHelmetBoxCapacity,
     getGroupBoxCapacity,
-
     isCrs2WithFourFinalDigits,
-
+    isCarbHelmet,
     constants:
         PACKING_RULES_CINA
-
 };

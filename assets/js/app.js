@@ -2616,7 +2616,7 @@ function getDashboardWorkspace() {
 
                         <p>
 
-                            Seleziona il tipo di cliente "<strong>STANDARD</strong>" o "<strong>CINA</strong>"
+                            Seleziona il tipo di cliente "<strong>STANDARD</strong>", "<strong>CINA</strong>" o "<strong>HERMES</strong>".
 
                         </p>
 
@@ -2815,7 +2815,8 @@ function getDashboardWorkspace() {
 
                         <span>
                             8 caschi per BOX per cliente STANDARD<br>
-                            10 o 12 caschi per BOX per cliente CINA
+                            10 o 12 caschi per BOX per cliente CINA<br>
+                            6 caschi per BOX per cliente HERMES
                         </span>
 
                     </div>
@@ -3002,6 +3003,41 @@ function getImportWorkspace() {
 
                             <span class="customer-selection-info">
                                 Regole specifiche cliente CINA
+                            </span>
+
+                        </span>
+
+                    </label>
+
+                    <label
+                        class="customer-selection-option ${
+                            selectedCustomer === "HERMES"
+                                ? "is-selected"
+                                : ""
+                        }"
+                    >
+
+                        <input
+                            type="radio"
+                            name="customer-selection"
+                            value="HERMES"
+                            ${
+                                selectedCustomer === "HERMES"
+                                    ? "checked"
+                                    : ""
+                            }
+                        >
+
+                        <span class="customer-selection-radio"></span>
+
+                        <span class="customer-selection-content">
+
+                            <span class="customer-selection-name">
+                                HERMES
+                            </span>
+
+                            <span class="customer-selection-info">
+                                Regole specifiche cliente HERMES
                             </span>
 
                         </span>
@@ -3222,7 +3258,8 @@ function handleCustomerSelection(
 
     if (
         selectedCustomer !== "STANDARD" &&
-        selectedCustomer !== "CINA"
+        selectedCustomer !== "CINA" &&
+        selectedCustomer !== "HERMES"
     ) {
 
         return;
@@ -6261,20 +6298,8 @@ function injectCustomerSelectionStyles() {
             font-size: 13px;
 
         }
-
-
-        .customer-selection-options {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 14px;
-
-        }
-
-
+      
+    
         .customer-selection-option {
 
             position: relative;

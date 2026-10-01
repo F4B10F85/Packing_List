@@ -55,7 +55,8 @@ const BOX_ENGINE_CONFIG = {
         "KPT",
         "NOVA",
         "CRABS",
-        "CARB"
+        "CARB",
+        "CARBH"
 
     ],
 
@@ -108,6 +109,15 @@ function normalizeCustomer(
     ) {
 
         return "CINA";
+
+    }
+
+
+    if (
+        normalizedCustomer === "HERMES"
+    ) {
+
+        return "HERMES";
 
     }
 
@@ -206,7 +216,7 @@ function codeHasRoot(
     return (
         normalizedCode === normalizedRoot ||
         normalizedCode.startsWith(
-            normalizedRoot + "."
+            normalizedRoot
         )
     );
 
@@ -471,16 +481,8 @@ function getBoxCapacityForCustomer(
 ) {
 
     const normalizedCustomer =
-        normalizeCustomer(
-            customer
-        );
+        normalizeCustomer(customer);
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | CINA
-    |--------------------------------------------------------------------------
-    */
 
     if (
         normalizedCustomer === "CINA" &&
@@ -488,21 +490,24 @@ function getBoxCapacityForCustomer(
     ) {
 
         return window.PackingListRulesCina
-            .getHelmetBoxCapacity(
-                row
-            );
+            .getHelmetBoxCapacity(row);
 
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | STANDARD
-    |--------------------------------------------------------------------------
-    */
+    if (
+        normalizedCustomer === "HERMES" &&
+        window.PackingListRulesHermes
+    ) {
 
-    return BOX_ENGINE_CONFIG
-        .MAX_HELMETS_PER_BOX;
+        return window.PackingListRulesHermes
+            .getHelmetBoxCapacity(row);
+
+    }
+
+
+    return PACKING_RULES
+        .BOX_MAX_HELMETS;
 
 }
 
@@ -519,16 +524,8 @@ function getGroupBoxCapacity(
 ) {
 
     const normalizedCustomer =
-        normalizeCustomer(
-            customer
-        );
+        normalizeCustomer(customer);
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | CINA
-    |--------------------------------------------------------------------------
-    */
 
     if (
         normalizedCustomer === "CINA" &&
@@ -536,21 +533,24 @@ function getGroupBoxCapacity(
     ) {
 
         return window.PackingListRulesCina
-            .getGroupBoxCapacity(
-                group
-            );
+            .getGroupBoxCapacity(group);
 
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | STANDARD
-    |--------------------------------------------------------------------------
-    */
+    if (
+        normalizedCustomer === "HERMES" &&
+        window.PackingListRulesHermes
+    ) {
 
-    return BOX_ENGINE_CONFIG
-        .MAX_HELMETS_PER_BOX;
+        return window.PackingListRulesHermes
+            .getGroupBoxCapacity(group);
+
+    }
+
+
+    return PACKING_RULES
+        .BOX_MAX_HELMETS;
 
 }
 

@@ -73,7 +73,8 @@ const HELMET_ROOTS = [
     "KPT",
     "NOVA",
     "CRABS",
-    "CARB"
+    "CARB",
+    "CARBH"
 
 ];
 
@@ -177,9 +178,8 @@ function findRoot(
     ) {
 
         if (
-            normalizedCode === root ||
             normalizedCode.startsWith(
-                `${root}.`
+                root
             )
         ) {
 
