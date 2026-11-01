@@ -845,6 +845,7 @@ function buildHelmetGroups(
     ) {
 
         const articleType =
+            row.articleType ||
             classifyCode(
                 row.code
             );
@@ -885,6 +886,35 @@ function buildHelmetGroups(
         if (
             articleType === "padding"
         ) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | IMBOTTITURE .C
+            |--------------------------------------------------------------------------
+            |
+            | Non devono essere associate al casco.
+            | Verranno recuperate successivamente
+            | da collectFinalItems().
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                row.hasC === true
+            ) {
+
+                continue;
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | IMBOTTITURE NORMALI
+            |--------------------------------------------------------------------------
+            |
+            | Solo quelle senza .C seguono il casco.
+            |--------------------------------------------------------------------------
+            */
 
             if (
                 currentGroup !== null
@@ -1375,6 +1405,12 @@ function collectFinalItems(
         );
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | REGISTRA LE IMBOTTITURE NORMALI GIÀ ASSOCIATE
+    |--------------------------------------------------------------------------
+    */
+
     for (
         const group of groups
     ) {
@@ -1392,15 +1428,28 @@ function collectFinalItems(
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | RACCOGLIE GLI ARTICOLI FINALI
+    |--------------------------------------------------------------------------
+    */
+
     for (
         const row of rows
     ) {
 
         const articleType =
+            row.articleType ||
             classifyCode(
                 row.code
             );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | ARTICOLI NON RICONOSCIUTI
+        |--------------------------------------------------------------------------
+        */
 
         if (
             articleType === "other"
@@ -1415,10 +1464,25 @@ function collectFinalItems(
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | IMBOTTITURE .C E IMBOTTITURE ORFANE
+        |--------------------------------------------------------------------------
+        |
+        | Le .C vanno sempre nella BOX finale.
+        |
+        | Le imbottiture normali non associate a un casco
+        | mantengono il comportamento precedente.
+        |--------------------------------------------------------------------------
+        */
+
         if (
             articleType === "padding" &&
-            !associatedPaddingRows.has(
-                row
+            (
+                row.hasC === true ||
+                !associatedPaddingRows.has(
+                    row
+                )
             )
         ) {
 
@@ -1430,6 +1494,12 @@ function collectFinalItems(
 
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | IMBOTTITURE ECCEDENTI
+    |--------------------------------------------------------------------------
+    */
 
     for (
         const excessPadding of excessPaddings
@@ -1672,18 +1742,34 @@ function buildBoxes(
     */
 
     const workingRows =
-        rows.map(
-            row => ({
+    rows.map(
+        row => {
+
+            const classification =
+                window.PackingListClassifier
+                    ? window.PackingListClassifier.classifyCode(
+                        row.code
+                    )
+                    : null;
+
+            return {
 
                 ...row,
 
                 articleType:
                     classifyCode(
                         row.code
-                    )
+                    ),
 
-            })
-        );
+                hasC:
+                    classification
+                        ? classification.hasC
+                        : row.hasC === true
+
+            };
+
+        }
+    );
 
 
     /*
